@@ -17,7 +17,7 @@ app = FastAPI()
 
 @app.get("/")
 def home():
-    return {"message": "Portfolio Backend is Running 🚀"}
+    return {"message": "Portfolio Backend is Running"}
 
 # CORS 
 app.add_middleware(
@@ -25,7 +25,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:8080",
         "http://127.0.0.1:8080",
-        "https://portfolio-website-seven-xi-36.vercel.app"
+        "https://sakshi-ashtekar-portfolio.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
