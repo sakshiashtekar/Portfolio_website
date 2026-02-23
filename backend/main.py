@@ -33,18 +33,19 @@ app.add_middleware(
 )
 
 # ------------------ Firebase Setup ------------------
-firebase_key = os.getenv("FIREBASE_KEY")
+from pathlib import Path
 
-if not firebase_key:
-    raise Exception("FIREBASE_KEY not found in environment variables")
+secret_path = Path("/etc/secrets/firebase_key.json")
 
-cred_dict = json.loads(firebase_key)
-cred = credentials.Certificate(cred_dict)
-
-if not firebase_admin._apps:
-    firebase_admin.initialize_app(cred)
-
-db = firestore.client()
+if secret_path.exists():
+    cred = credentials.Certificate(str(secret_path))
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred)
+    db = firestore.client()
+    print("Firebase initialized from secret file")
+else:
+    print("Firebase secret file not found")
+    db = None
 
 # ------------------ Models ------------------
 
