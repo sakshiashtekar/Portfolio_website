@@ -14,6 +14,10 @@ load_dotenv()
 # ------------------ FastAPI Setup ------------------
 app = FastAPI()
 
+@app.get("/")
+def home():
+    return {"message": "Portfolio Backend is Running 🚀"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:8080", "http://127.0.0.1:8080"],
