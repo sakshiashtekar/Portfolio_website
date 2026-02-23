@@ -6,6 +6,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
 import os
+import json
 from dotenv import load_dotenv
 
 # ------------------ Load Environment Variables ------------------
@@ -18,11 +19,13 @@ app = FastAPI()
 def home():
     return {"message": "Portfolio Backend is Running 🚀"}
 
+# ------------------ CORS ------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:8080",
-        "https://portfolio-website-seven-xi-36.vercel.app/"
+        "http://127.0.0.1:8080",
+        "https://portfolio-website-seven-xi-36.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -30,8 +33,17 @@ app.add_middleware(
 )
 
 # ------------------ Firebase Setup ------------------
-cred = credentials.Certificate("firebase_key.json")
-firebase_admin.initialize_app(cred)
+firebase_key = os.getenv("FIREBASE_KEY")
+
+if not firebase_key:
+    raise Exception("FIREBASE_KEY not found in environment variables")
+
+cred_dict = json.loads(firebase_key)
+cred = credentials.Certificate(cred_dict)
+
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)
+
 db = firestore.client()
 
 # ------------------ Models ------------------
@@ -48,6 +60,8 @@ class ContactRequest(BaseModel):
 @app.post("/chat")
 def chat(request: ChatRequest):
     try:
+        print("Incoming message:", request.message)
+
         portfolio_context = """
 You are the AI assistant for Sakshi Ashtekar's portfolio website.
 
@@ -57,10 +71,7 @@ IMPORTANT RULES:
 - If something is not available, respond:
   "This information is not available in Sakshi's portfolio."
 
--------------------------
-ABOUT SAKSHI
--------------------------
-Sakshi Ashtekar is a Product-driven Software Developer.
+ABOUT SAKSHI:
 
 Education:
 - B.E Computer Engineering (Honors in Data Science), Pune University (GPA: 8.77)
@@ -68,7 +79,7 @@ Education:
 - SSC: 75.6%
 
 Experience:
-- Graduate Engineer Trainee at LTIMindtree (Java & Android training)
+- Graduate Engineer Trainee at LTIMindtree
 - React Native Intern at Whatbytes
 - Android App Developer Intern at Planet Geo Tech
 - Technical Support Intern at Cyret Technologies
@@ -81,10 +92,10 @@ Concepts: OOP, DSA
 Tools: Git, Azure, Postman
 Methodologies: Agile, Scrum
 Testing: Manual Testing, JIRA
-API: REST APIs, async handling
+API: REST APIs
 
 Projects:
-- ExpertEase (Expert discovery & scheduling app)
+- ExpertEase
 - Near Miss Incident Reporting Tool
 - Nearvana mobile app
 - Attendance App with live location tracking
@@ -101,7 +112,7 @@ Achievements:
         }
 
         payload = {
-            "model": "openai/gpt-3.5-turbo",
+            "model": "meta-llama/llama-3-8b-instruct",
             "messages": [
                 {"role": "system", "content": portfolio_context},
                 {"role": "user", "content": request.message}
@@ -111,27 +122,32 @@ Achievements:
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers=headers,
-            json=payload
+            json=payload,
+            timeout=15
         )
 
+        print("OpenRouter status:", response.status_code)
+        print("OpenRouter response:", response.text)
+
         if response.status_code != 200:
-            return {"reply": "AI service error."}
+            return {"reply": f"AI error: {response.text}"}
 
         data = response.json()
-
         reply = data["choices"][0]["message"]["content"]
 
         return {"reply": reply}
 
     except Exception as e:
-        print("Chat error:", e)
+        print("Chat error:", str(e))
         return {"reply": "Sorry, something went wrong."}
-    
-# ------------------ Contact API ------------------
 
+
+# ------------------ Contact API ------------------
 @app.post("/contact")
 def save_contact(request: ContactRequest):
     try:
+        print("Saving contact:", request.email)
+
         db.collection("contacts").add({
             "name": request.name,
             "email": request.email,
@@ -142,5 +158,5 @@ def save_contact(request: ContactRequest):
         return {"status": "success"}
 
     except Exception as e:
-        print("Contact error:", e)
+        print("Contact error:", str(e))
         return {"status": "error", "message": str(e)}
