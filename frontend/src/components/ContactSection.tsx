@@ -23,7 +23,7 @@ const ContactSection = () => {
     try {
       setLoading(true);
 
-      const response = await fetch("http://127.0.0.1:8000/contact", {
+      const response = await fetch("https://portfolio-website-3qf7.onrender.com/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
