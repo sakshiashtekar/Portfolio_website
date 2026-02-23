@@ -77,7 +77,7 @@ const HeroSection = () => (
           <Linkedin className="h-4 w-4" /> LinkedIn
         </a>
         <a
-          href="/Sakshi_Ashtekar_Resume.pdf"
+          href="/Sakshi_Ashtekar_Developer.pdf"
           download
           className="neon-btn bg-background text-foreground"
         >

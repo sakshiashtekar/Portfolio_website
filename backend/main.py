@@ -9,17 +9,17 @@ import os
 import json
 from dotenv import load_dotenv
 
-# ------------------ Load Environment Variables ------------------
+# Load Environment Variables 
 load_dotenv()
 
-# ------------------ FastAPI Setup ------------------
+# FastAPI Setup 
 app = FastAPI()
 
 @app.get("/")
 def home():
     return {"message": "Portfolio Backend is Running 🚀"}
 
-# ------------------ CORS ------------------
+# CORS 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -32,7 +32,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ------------------ Firebase Setup ------------------
+# Firebase Setup 
 from pathlib import Path
 
 secret_path = Path("/etc/secrets/firebase_key.json")
@@ -47,7 +47,7 @@ else:
     print("Firebase secret file not found")
     db = None
 
-# ------------------ Models ------------------
+# Models 
 
 class ChatRequest(BaseModel):
     message: str
@@ -57,7 +57,7 @@ class ContactRequest(BaseModel):
     email: str
     message: str
 
-# ------------------ Chat API ------------------
+# Chat API 
 @app.post("/chat")
 def chat(request: ChatRequest):
     try:
@@ -143,7 +143,7 @@ Achievements:
         return {"reply": "Sorry, something went wrong."}
 
 
-# ------------------ Contact API ------------------
+# Contact API 
 @app.post("/contact")
 def save_contact(request: ContactRequest):
     try:
