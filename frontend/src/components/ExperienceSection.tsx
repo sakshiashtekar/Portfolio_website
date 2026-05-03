@@ -23,12 +23,14 @@ const experiences = [
   },
   {
     company: "Planet Geo Tech",
-    role: "Android App Developer Intern",
-    period: "Aug 2023 – Sep 2023",
+    role: "Mobile App Developer",
+    period: "Nov 2023 – Sep 2024",
     points: [
-      "Developed core modules for an Android app using Java and Android Studio.",
-      "Integrated Firebase for real-time data synchronization and authentication.",
-      "Improved app load times through performance optimization.",
+      "Designed app wireframes and UI flows using Figma",
+      "Implemented UI screens in React Native and integrated live location services",
+      "Designed and developed app architecture using OOP concepts and handled API integration",
+      "Improved usability and responsiveness across screens",
+      "Setup Mysql database",
     ],
   },
   {
