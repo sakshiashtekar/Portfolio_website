@@ -45,7 +45,7 @@ const HeroSection = () => (
         className="text-base text-muted-foreground max-w-lg mx-auto mb-8"
       >
         Product-driven software engineer building production-ready mobile applications end-to-end.
-        Strong in Frontend, Java, and OOP, delivering scalable, intuitive features from concept to development.
+        Strong in Frontend, Javascript, and OOP, delivering scalable, intuitive features from concept to development.
       </motion.p>
 
       <motion.div
